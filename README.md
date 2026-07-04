@@ -19,6 +19,28 @@ Two independently assembled LP formulations must agree (unit-major assembly solv
 
 Both formulations share scipy/HiGHS, so this is cross-implementation validation of the constraint assembly (the dominant error source), not independent-solver validation — stated plainly. See [CALIBRATION.md](CALIBRATION.md) for how the load-profile design was iterated against measured difficulty (a naive gradual climb produced ramp *infeasibility* without economic *cost* — the duck-curve construction fixes exactly that).
 
+## Baseline results
+
+50 instances (seeds 0–49), 1 rollout each, July 2026:
+
+| Model | total | format | feasibility | optimality |
+|---|---|---|---|---|
+| claude-haiku-4-5 (8k tokens) | **0.242** | 0.980 | 0.200 | 0.135 |
+| claude-opus-4-8 (16k tokens) | **0.890** | 0.920 | 0.900 | 0.879 |
+
+The weak model writes near-perfectly parseable schedules and only 1 in 5
+survives the ramp physics. The frontier model reaches 90% feasibility but its
+optimality-when-feasible is 0.977 (vs 0.998 on the congestion sibling) — the
+economics of pre-positioning slow units is harder than it looks even when the
+constraints are satisfied. Across the vertical the weak-model ladder is
+0.861 → 0.520 → 0.242 ([economic-dispatch](https://github.com/JWilksBooth/economic-dispatch)
+→ [dcopf-grid-verifiers](https://github.com/JWilksBooth/dcopf-grid-verifiers) → this).
+
+```bash
+vf-eval multiperiod-dispatch -p anthropic -m claude-haiku-4-5-20251001 -n 50 -r 1 --max-tokens 8000 --save-results
+vf-eval multiperiod-dispatch -p anthropic -m claude-opus-4-8 -n 50 -r 1 --max-tokens 16000 --save-results
+```
+
 ## Rewards (weighted rubric)
 
 | Reward | Weight | Description |
