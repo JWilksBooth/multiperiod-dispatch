@@ -41,6 +41,12 @@ vf-eval multiperiod-dispatch -p anthropic -m claude-haiku-4-5-20251001 -n 50 -r 
 vf-eval multiperiod-dispatch -p anthropic -m claude-opus-4-8 -n 50 -r 1 --max-tokens 16000 --save-results
 ```
 
+## Example failure (claude-haiku-4-5, from the baseline run)
+
+> *"...G2 ramp: 72.5 - 6.5 = 66 > 64.3 ... Can't meet ramp constraint. After multiple iterations, optimal solution: [emits schedule]"*
+
+The model correctly computes that a ramp limit is violated — then submits a schedule anyway, one that also puts **G3 at 6.8 MW, below its minimum**. Feasibility reward: **0**. The ramp coupling across periods is precisely the reasoning per-period merit order cannot shortcut.
+
 ## Rewards (weighted rubric)
 
 | Reward | Weight | Description |
