@@ -100,14 +100,18 @@ def run_gate_tests():
     assert 0.0 < r < 1.0, f"expected partial credit, got {r}"
     print(f"gate 4 (feasible suboptimal): PASS — partial credit {r:.3f}")
 
-    # 5. NaN / Infinity / huge-int attacks
+    # 5. NaN / Infinity / huge-int attacks. '9'*5000 exceeds CPython's 4300-digit
+    # int-string limit -> json.loads raises plain ValueError (not JSONDecodeError);
+    # nested brackets raise RecursionError. Both must score 0, never crash.
     row_of = lambda bad: "[" + ", ".join([bad] * G) + "]"
-    for bad in ("NaN", "Infinity", "-Infinity", "9" * 400):
+    for bad in ("NaN", "Infinity", "-Infinity", "9" * 400, "9" * 5000):
         a = '{"dispatch_mw": [' + ", ".join([row_of(bad)] * T) + "]}"
         assert reward_format(a, inst) == 0.0, f"{bad[:12]}: format gate broken"
         assert reward_feasibility(a, inst) == 0.0, f"{bad[:12]}: feasibility gate broken"
         assert reward_optimality(a, inst, opt["cost"]) == 0.0, f"{bad[:12]}: optimality gate broken"
-    print("gate 5 (NaN/Infinity/huge-int attack): PASS — all rewards 0.0")
+    bomb = '{"dispatch_mw": ' + "[" * 2000 + "]" * 2000 + "}"
+    assert reward_format(bomb, inst) == 0.0 and reward_optimality(bomb, inst, opt["cost"]) == 0.0
+    print("gate 5 (NaN/Infinity/huge-int/bracket-bomb attack): PASS — all rewards 0.0, no crash")
 
     # 6. tolerance-rent: shave 0.4 MW off the priciest unit in one period
     shaved = [row[:] for row in opt["dispatch_mw"]]
@@ -128,6 +132,27 @@ def run_gate_tests():
     assert r_shaved < 0.999 and r_shaved < r_honest, (
         f"tolerance-rent scored {r_shaved} vs honest {r_honest}")
     print(f"gate 6 (tolerance-rent attack): PASS — {r_shaved:.4f} < honest {r_honest:.4f}")
+
+    # 7. multi-period settlement: no within-tolerance perturbation of the optimum
+    # may tie or beat honest optimal. Search over-generation AND under-generation
+    # at 0.49 MW (inside the 0.5 tolerance) on every (period, unit); the horizon-
+    # scaled symmetric penalty must keep every one strictly below honest.
+    r_honest = reward_optimality(answer(opt["dispatch_mw"]), inst, opt["cost"])
+    worst = 0.0
+    for t in range(T):
+        for g_i in range(G):
+            for delta in (+0.49, -0.49):
+                cand = [row[:] for row in opt["dispatch_mw"]]
+                cand[t][g_i] += delta
+                lo = inst["units"][g_i]["p_min"] - 0.5
+                hi = inst["units"][g_i]["p_max"] + 0.5
+                if not (lo <= cand[t][g_i] <= hi):
+                    continue
+                a = answer(cand)
+                if reward_feasibility(a, inst) == 1.0:
+                    worst = max(worst, reward_optimality(a, inst, opt["cost"]))
+    assert worst < r_honest, f"settlement gameable: best cheat {worst} >= honest {r_honest}"
+    print(f"gate 7 (multi-period settlement): PASS — best within-tolerance cheat {worst:.4f} < honest {r_honest:.4f}")
 
 
 if __name__ == "__main__":

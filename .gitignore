@@ -9,3 +9,4 @@ venv/
 *.egg
 .DS_Store
 outputs/
+.prime/

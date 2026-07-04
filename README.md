@@ -49,7 +49,7 @@ vf-eval multiperiod-dispatch -p anthropic -m claude-opus-4-8 -n 50 -r 1 --max-to
 | `reward_feasibility` | 0.35 | Positive-proof check: per-period balance, unit bounds, all ramp transitions |
 | `reward_optimality` | 0.55 | Gated on feasibility; `exp(-5 × |relative cost gap|)` vs LP optimum |
 
-Anti-reward-hacking carried over from the sibling environments and regression-tested by 6 attack gates in `tests/test_validation.py`: the ramp-blind cheap schedule scores 0 (feasibility gate), `NaN`/`Infinity` literals and oversized integers are rejected at parse, and tolerance-rent (under-serving load inside the ±0.5 MW grading tolerance to beat the LP optimum) is settled at a 2× imbalance penalty price with below-optimum cost penalized symmetrically.
+Anti-reward-hacking carried over from the sibling environments and regression-tested by 7 attack gates in `tests/test_validation.py`: the ramp-blind cheap schedule scores 0 (feasibility gate); `NaN`/`Infinity` literals and oversized integers (including CPython's >4300-digit limit and deeply-nested-bracket payloads) are rejected at parse; and tolerance abuse (riding the ±0.5 MW grading tolerance to beat the LP optimum) is settled at a penalty price of 2×·T·(max unit cost) — scaled by the horizon T because a single within-tolerance violation can buy an advantageous position that pays off across every remaining period — with imbalance priced symmetrically so over-generation is as costly as under-service.
 
 ## Usage
 
@@ -62,7 +62,9 @@ N_INSTANCES=200 python tests/test_validation.py
 # difficulty distribution / calibration sweep
 python calibration/measure.py --n 300
 
-vf-eval multiperiod-dispatch -m <model> -n 50
+# give frontier models room to reason — a bare command defaults to 4096 tokens
+# and frontier rollouts truncate, collapsing the score to ~0.5
+vf-eval multiperiod-dispatch -p anthropic -m <model> -n 50 -r 1 --max-tokens 16000
 ```
 
 ```python

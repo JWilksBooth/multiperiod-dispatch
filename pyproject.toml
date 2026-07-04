@@ -1,6 +1,6 @@
 [project]
 name = "multiperiod-dispatch"
-version = "0.1.0"
+version = "0.1.1"
 description = "Multi-period economic dispatch RL environment with ramp limits (UC-lite): cheap units are slow, fast units are expensive, so per-period merit-order reasoning is provably infeasible on 74% of instances. Dual-formulation LP ground truth; optimality reward hard-gated on a feasibility check with imbalance-penalty settlement."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -25,4 +25,4 @@ include = ["multiperiod_dispatch.py"]
 
 [tool.verifiers.eval]
 num_examples = 50
-rollouts_per_example = 3
+rollouts_per_example = 1

@@ -28,7 +28,7 @@ import math
 import random
 import re
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 DEFAULT_NUM_EXAMPLES = 300
 
@@ -272,7 +272,9 @@ def parse_dispatch(completion: str, inst: dict) -> list[list[float]] | None:
     for raw in reversed(re.findall(r'\{[^{}]*"dispatch_mw"[^{}]*\}', completion, re.DOTALL)):
         try:
             obj = json.loads(raw)
-        except json.JSONDecodeError:
+        # ValueError covers JSONDecodeError AND CPython's >4300-digit int limit;
+        # RecursionError covers deeply nested brackets. Both must skip, not crash.
+        except (ValueError, RecursionError):
             continue
         rows = obj.get("dispatch_mw")
         if (isinstance(rows, list) and len(rows) == T
@@ -315,9 +317,17 @@ def reward_feasibility(completion: str, inst: dict) -> float:
 def reward_optimality(completion: str, inst: dict,
                       optimal_cost: float | None = None) -> float:
     """exp(-5|gap|), gated on feasibility. Residual violations inside the
-    grading tolerance are settled at 2x the highest offer (imbalance-penalty
-    pricing) and below-optimum cost is penalized symmetrically, so tolerance
-    abuse strictly loses to honest optimal dispatch."""
+    grading tolerance are settled at a penalty price and below-optimum cost is
+    penalized symmetrically, so tolerance abuse strictly loses to honest optimal
+    dispatch.
+
+    Two hardenings over a naive per-period penalty: (a) imbalance is priced
+    symmetrically (abs), because over-generating one unit within tolerance to
+    dodge a downstream ramp is as much a cheat as under-serving; (b) the penalty
+    scales with the horizon T. A single within-tolerance violation can buy an
+    advantageous position that pays off across all remaining periods, so it must
+    cost more than T periods of the most expensive unit — 2*T*c_max gives a
+    provable 2x margin over any multi-period gain a 1 MW slack could purchase."""
     X = parse_dispatch(completion, inst)
     if X is None:
         return 0.0
@@ -330,10 +340,10 @@ def reward_optimality(completion: str, inst: dict,
             return 0.0
         optimal_cost = sol["cost"]
     T, units = inst["periods"], inst["units"]
-    penalty = 2.0 * max(u["cost"] for u in units)
+    penalty = 2.0 * T * max(u["cost"] for u in units)
     viol = 0.0
     for t in range(T):
-        viol += max(0.0, inst["loads_mw"][t] - sum(X[t]))
+        viol += abs(sum(X[t]) - inst["loads_mw"][t])  # symmetric: over- and under-generation
         for g, u in enumerate(units):
             viol += max(0.0, u["p_min"] - X[t][g]) + max(0.0, X[t][g] - u["p_max"])
     for t in range(T - 1):
