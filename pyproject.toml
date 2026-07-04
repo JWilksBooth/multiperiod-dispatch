@@ -1,0 +1,28 @@
+[project]
+name = "multiperiod-dispatch"
+version = "0.1.0"
+description = "Multi-period economic dispatch RL environment with ramp limits (UC-lite): cheap units are slow, fast units are expensive, so per-period merit-order reasoning is provably infeasible on 74% of instances. Dual-formulation LP ground truth; optimality reward hard-gated on a feasibility check with imbalance-penalty settlement."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "JWilksBooth" }]
+license = { text = "MIT" }
+keywords = [
+    "reinforcement-learning", "rl-environment", "verifiers", "power-systems",
+    "economic-dispatch", "ramp-limits", "unit-commitment", "verifiable-rewards",
+]
+tags = ["single-turn", "power-systems", "optimization", "multi-period", "train", "eval"]
+dependencies = ["numpy", "scipy", "verifiers>=0.1.14", "datasets"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build]
+include = ["multiperiod_dispatch.py", "pyproject.toml"]
+
+[tool.hatch.build.targets.wheel]
+include = ["multiperiod_dispatch.py"]
+
+[tool.verifiers.eval]
+num_examples = 50
+rollouts_per_example = 3

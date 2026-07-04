@@ -1,0 +1,129 @@
+{
+  "n_per_config": 300,
+  "results": {
+    "default": {
+      "config": {},
+      "metrics": {
+        "n": 300,
+        "greedy_infeasible_rate": 0.95,
+        "median_premium_constrained": 0.05457248022497679,
+        "max_premium": 0.7390507421368196,
+        "rejection_rate": 0.09
+      }
+    },
+    "climb=(1, 2)_tight=(0.45, 0.85)": {
+      "config": {
+        "climb_periods": [
+          1,
+          2
+        ],
+        "climb_tightness": [
+          0.45,
+          0.85
+        ]
+      },
+      "metrics": {
+        "n": 300,
+        "greedy_infeasible_rate": 0.95,
+        "median_premium_constrained": 0.05145609950190546,
+        "max_premium": 0.7006449257166603,
+        "rejection_rate": 0.035
+      }
+    },
+    "climb=(1, 2)_tight=(0.55, 0.95)": {
+      "config": {
+        "climb_periods": [
+          1,
+          2
+        ],
+        "climb_tightness": [
+          0.55,
+          0.95
+        ]
+      },
+      "metrics": {
+        "n": 300,
+        "greedy_infeasible_rate": 0.95,
+        "median_premium_constrained": 0.05457248022497679,
+        "max_premium": 0.7390507421368196,
+        "rejection_rate": 0.09
+      }
+    },
+    "climb=(1, 2)_tight=(0.7, 1.0)": {
+      "config": {
+        "climb_periods": [
+          1,
+          2
+        ],
+        "climb_tightness": [
+          0.7,
+          1.0
+        ]
+      },
+      "metrics": {
+        "n": 300,
+        "greedy_infeasible_rate": 0.95,
+        "median_premium_constrained": 0.06227801000804108,
+        "max_premium": 0.5595926634531238,
+        "rejection_rate": 0.1475
+      }
+    },
+    "climb=(2, 2)_tight=(0.45, 0.85)": {
+      "config": {
+        "climb_periods": [
+          2,
+          2
+        ],
+        "climb_tightness": [
+          0.45,
+          0.85
+        ]
+      },
+      "metrics": {
+        "n": 300,
+        "greedy_infeasible_rate": 0.94,
+        "median_premium_constrained": 0.053294669144928905,
+        "max_premium": 0.6032045393939461,
+        "rejection_rate": 0.07
+      }
+    },
+    "climb=(2, 2)_tight=(0.55, 0.95)": {
+      "config": {
+        "climb_periods": [
+          2,
+          2
+        ],
+        "climb_tightness": [
+          0.55,
+          0.95
+        ]
+      },
+      "metrics": {
+        "n": 300,
+        "greedy_infeasible_rate": 0.9366666666666666,
+        "median_premium_constrained": 0.05457248022497679,
+        "max_premium": 0.5548008617851785,
+        "rejection_rate": 0.1625
+      }
+    },
+    "climb=(2, 2)_tight=(0.7, 1.0)": {
+      "config": {
+        "climb_periods": [
+          2,
+          2
+        ],
+        "climb_tightness": [
+          0.7,
+          1.0
+        ]
+      },
+      "metrics": {
+        "n": 300,
+        "greedy_infeasible_rate": 0.9366666666666666,
+        "median_premium_constrained": 0.05203954717510405,
+        "max_premium": 0.4560158771531434,
+        "rejection_rate": 0.255
+      }
+    }
+  }
+}
