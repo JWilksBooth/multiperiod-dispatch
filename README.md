@@ -85,5 +85,5 @@ Tiered fleet (40% baseload $15–30/MWh with 5–15%/period ramps, 40% mid-merit
 
 ## Roadmap
 
-- v0.2: startup costs + on/off commitment decisions (discrete on/off is delivered as the sibling env unit-commitment-lite (in build); this repo stays the continuous ramp-coupling rung)
-- Shipped siblings: [n1-contingency-dispatch](https://github.com/JWilksBooth/n1-contingency-dispatch) (N-1 security, 68% insecure), [nodal-pricing-lmp](https://github.com/JWilksBooth/nodal-pricing-lmp) (LMP pricing, 44% out-of-band)
+- v0.2: startup costs + on/off commitment decisions (discrete on/off is delivered as the sibling env unit-commitment-lite (local); this repo stays the continuous ramp-coupling rung)
+- Shipped siblings: [n1-contingency-dispatch](https://github.com/JWilksBooth/n1-contingency-dispatch) (N-1 security, 68% insecure), [nodal-pricing-lmp](https://github.com/JWilksBooth/nodal-pricing-lmp) (LMP pricing, 44% out-of-band), unit-commitment-lite (local) (discrete unit commitment, the axis-sibling of this env)
