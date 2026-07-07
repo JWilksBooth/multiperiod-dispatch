@@ -41,7 +41,7 @@ cannot. Slow fleets get capped peaks — also true of real systems.
 
 `DEFAULT_GEN_CONFIG` in `multiperiod_dispatch.py`. Validation on dataset seeds
 0–199: 0/200 dual-formulation mismatches (worst rel gap 8.8e-16), 149/200
-(74%) greedy-infeasible, 5.4% median premium, all 6 attack gates pass.
+(74%) greedy-infeasible, 5.4% median premium, all 7 attack gates pass.
 
 ## Stylizations stated, not hidden
 

@@ -1,6 +1,6 @@
 # multiperiod-dispatch
 
-Multi-period economic dispatch RL environment with ramp limits (unit-commitment-lite). Third environment in a power-systems vertical ([economic-dispatch](https://github.com/JWilksBooth/economic-dispatch) → [dcopf-grid-verifiers](https://github.com/JWilksBooth/dcopf-grid-verifiers) → this). The physics axis here is **time**: unit output changes between consecutive periods are limited by ramp rates, and the fleet is drawn with real merit-stack texture — **cheap units are slow, fast units are expensive**. Per-period merit-order reasoning is therefore provably infeasible on a measured **74% of instances**: the cheap baseload cannot climb out of the valley into the peak fast enough, so cost-optimal scheduling must anticipate the climb periods ahead of time or pay expensive fast units to carry the peak.
+Multi-period economic dispatch RL environment with ramp limits. Third environment in a power-systems vertical ([economic-dispatch](https://github.com/JWilksBooth/economic-dispatch) → [dcopf-grid-verifiers](https://github.com/JWilksBooth/dcopf-grid-verifiers) → this). The physics axis here is **time**: unit output changes between consecutive periods are limited by ramp rates, and the fleet is drawn with real merit-stack texture — **cheap units are slow, fast units are expensive**. Per-period merit-order reasoning is therefore provably infeasible on a measured **74% of instances**: the cheap baseload cannot climb out of the valley into the peak fast enough, so cost-optimal scheduling must anticipate the climb periods ahead of time or pay expensive fast units to carry the peak.
 
 ## Task
 
@@ -85,5 +85,5 @@ Tiered fleet (40% baseload $15–30/MWh with 5–15%/period ramps, 40% mid-merit
 
 ## Roadmap
 
-- v0.2: startup costs + on/off commitment decisions (true UC, MILP ground truth)
-- Sibling roadmap: N-1 contingency screening; LMP/nodal pricing verified against LP duals
+- v0.2: startup costs + on/off commitment decisions (discrete on/off is delivered as the sibling env unit-commitment-lite (in build); this repo stays the continuous ramp-coupling rung)
+- Shipped siblings: [n1-contingency-dispatch](https://github.com/JWilksBooth/n1-contingency-dispatch) (N-1 security, 68% insecure), [nodal-pricing-lmp](https://github.com/JWilksBooth/nodal-pricing-lmp) (LMP pricing, 44% out-of-band)
